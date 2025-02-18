@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <utility>
 #include "Q7.h"
 
 //implement node class
@@ -59,7 +60,20 @@ neighbourhood::neighbourhood(int customerNum){
     
 };
 
+void neighbourhood::simulate_order(int orderNum){
+    //create random orders
+    std::vector<std::pair<node*, int>> orders;
+    for (int i=0; i<orderNum; i++){
+        std::pair<node*, int> order = std::make_pair(_customers[rand() % _customers.size()], (rand() % 2) + 1);
+        orders.push_back(order);
+    }
+
+}
+
 int main(){
     srand(time(0));
+
+    neighbourhood n(10);
+
     return 0;
 }

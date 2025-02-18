@@ -20,6 +20,7 @@ class node{
 class neighbourhood{
     public:
         neighbourhood(int customerNum);
+        void simulate_order(int orderNum);
     private:
         node* _store;
         std::vector<node*> _customers;
