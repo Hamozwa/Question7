@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <utility>
 
 class node{
     public:
@@ -23,7 +24,7 @@ class node{
 class neighbourhood{
     public:
         neighbourhood(int customerNum);
-        int shortest_path(node* customer);
+        std::pair<std::vector<node*>, int> shortest_path(node* customer);
         void simulate_order(int orderNum);
     private:
         node* _store;

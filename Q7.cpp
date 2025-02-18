@@ -68,16 +68,18 @@ neighbourhood::neighbourhood(int customerNum){
     
 };
 
-int neighbourhood::shortest_path(node* customer){
+std::pair<std::vector<node*>, int> neighbourhood::shortest_path(node* customer){
     node* current = customer;
+    std::vector<node*> path;
     int distance = 0;
     
     while (current != _store){
-        distance += current->get_distance();
+        path.insert(path.begin(), current);
         current = current->get_parent();
+        distance += current->get_distance();
     }
 
-    return distance;
+    return make_pair(path, distance);
 };
 
 void neighbourhood::simulate_order(int orderNum){
@@ -88,12 +90,47 @@ void neighbourhood::simulate_order(int orderNum){
         orders.push_back(order);
     }
 
+    //deliver orders
+    std::vector<bool> delivered(orderNum, false);
+
+    for (int i=0; i<orderNum; i++){
+        if (delivered[i] == false){
+            delivered[i] = true;
+            int items = orders[i].second;
+            std::cout << "Delivering " << items << " items to " << orders[i].first->get_name() << std::endl;
+            std::pair<std::vector<node*>, int> shortest = shortest_path(orders[i].first);
+            std::vector<node*> path = shortest.first;
+            int distance = shortest.second;
+
+            //check if another item can be delivered on the way
+            bool filled_basket = false;
+            for (int j=0; j<path.size(); j++){
+                for (int k=0; k<orderNum; k++){
+                    if (delivered[k] == false && orders[k].first == path[j] && items + orders[k].second <= 3){
+                        delivered[k] = true;
+                        items += orders[k].second;
+                        std::cout << "Delivering " << orders[k].second << "items to " << orders[k].first->get_name() << " on the way." << std::endl;
+                        if (items == 3){
+                            filled_basket = true;
+                            break;
+                        }
+                    }
+                }
+                if (filled_basket){
+                    break;
+                }
+
+            }
+            std::cout << "Total distance for trip: " << distance << std::endl;
+        }
+    }
+
 }
 
 int main(){
     srand(time(0));
 
     neighbourhood n(10);
-
+    n.simulate_order(10);
     return 0;
 }
