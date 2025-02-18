@@ -18,6 +18,12 @@ int node::get_distance() const{
 void node::add_child(node* child){
     _child_nodes.push_back(child);
 };
+void node::set_parent(node* parent){
+    _parent = parent;
+};
+node* node::get_parent() const {
+    return _parent;
+};
 std::vector<node*> node::get_child_nodes() const {
     return _child_nodes;
 };
@@ -39,12 +45,14 @@ neighbourhood::neighbourhood(int customerNum){
         if (current_customer == -1){ //add to store
             for (int i=0; i < current_children; i++){
                 _store->add_child(_customers[added + i]);
+                _customers[added + i]->set_parent(_store);
                 added++;
             }
         }
         else{ //add to next customer
             for (int i=0; i < current_children; i++){
                 _customers[current_customer]->add_child(_customers[added + i]);
+                _customers[added + i]->set_parent(_customers[current_customer]);
                 added++;
             
             }
@@ -58,6 +66,18 @@ neighbourhood::neighbourhood(int customerNum){
         std::cout << _customers[i]->get_name() << " ";
     }
     
+};
+
+int neighbourhood::shortest_path(node* customer){
+    node* current = customer;
+    int distance = 0;
+    
+    while (current != _store){
+        distance += current->get_distance();
+        current = current->get_parent();
+    }
+
+    return distance;
 };
 
 void neighbourhood::simulate_order(int orderNum){
